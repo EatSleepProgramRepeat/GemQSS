@@ -1,28 +1,38 @@
 package com.GemQSS;
 
-import javax.swing.*;
-import java.awt.*;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.Screen;
 
-public class PromptInterface {
-    public PromptInterface() {
-        // No title because it's a prompt
-        JFrame frame = new JFrame("GemQSS");
-        frame.setUndecorated(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // TODO: Make the prompt interface size react to a config file
+public class PromptInterface extends Application {
 
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int width = screenSize.width / 16;
-        int height = 50;
-        int x = (screenSize.width - width) / 2;
-        int y = 100;
-        frame.setBounds(x, y, width, height);
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("GemQSS");
+        primaryStage.setAlwaysOnTop(true);
 
-        frame.setBackground(new Color(56, 55, 55, 217));
-        frame.getRootPane().setBorder(BorderFactory.createLineBorder(new Color(0, 104, 80), 6));
-        System.out.println("Prompt Interface Launched");
+        // Sizing
+        primaryStage.setHeight(50);
+        // Set the width to 1/8 of the screen
+        double screenWidth = Screen.getPrimary().getBounds().getWidth();
+        System.out.println(screenWidth);
+        primaryStage.setWidth(screenWidth / 4);
 
-        frame.setAlwaysOnTop(true);
-        frame.setVisible(true);
+        StackPane root = new StackPane();
+        root.setBorder(new Border(new BorderStroke(
+                Color.rgb(2, 134, 136),
+                BorderStrokeStyle.SOLID,
+                CornerRadii.EMPTY,
+                new BorderWidths(5)
+        )));
+
+        Scene scene = new Scene(root, 800, 600);
+        primaryStage.setScene(scene);
+        scene.setFill(new Color(0.1, 0.1, 0.1, 0.85));
+
+        primaryStage.show();
     }
 }

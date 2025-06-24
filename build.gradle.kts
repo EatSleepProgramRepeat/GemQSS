@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("application")
-//    id("com.github.johnrengelman.shadow") version "8.4.1"
+    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 group = "com.GemQSS"
@@ -28,4 +28,9 @@ tasks.jar {
     manifest {
         attributes["Main-Class"] = "com.GemQSS.Main"
     }
+}
+
+javafx {
+    version = "21.0.1"
+    modules = listOf("javafx.controls", "javafx.fxml")
 }

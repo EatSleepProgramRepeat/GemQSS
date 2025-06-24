@@ -1,7 +1,10 @@
 package com.GemQSS;
 
+import javafx.application.Application;
+
 public class Main {
     public static void main(String[] args) {
-        new PromptInterface();
+        Application.launch(PromptInterface.class);
+
     }
 }
