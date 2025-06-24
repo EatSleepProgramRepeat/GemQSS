@@ -43,7 +43,7 @@ public class ImageUtils {
     public static BufferedImage takeScreenshot() throws UnsupportedOperationException, IOException {
         String osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("win") || osName.contains("mac")) {
-            return null;
+            return takeScreenshotWithRobot();
         } else if (osName.contains("nix") || osName.contains("nux")) {
             return takeScreenshotWithLinuxTools();
         } else {
@@ -78,7 +78,6 @@ public class ImageUtils {
     private static BufferedImage takeScreenshotWithLinuxTools() throws UnsupportedOperationException, IOException {
         if (checkBinaryExists("grim")) {
             try {
-                String command = "grim /tmp/screenshot.png";
                 Process process = new ProcessBuilder("grim", "/tmp/screenshot.png").start();
                 boolean finished = process.waitFor(5, java.util.concurrent.TimeUnit.SECONDS);
                 if (!finished || process.exitValue() != 0) {
@@ -120,15 +119,14 @@ public class ImageUtils {
         JFrame frame = new JFrame("test program");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(300, 200);
-        BufferedImage screenshot = new BufferedImage(300, 300, BufferedImage.TYPE_INT_RGB);
+        BufferedImage screenshot;
         try {
             screenshot = takeScreenshot();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//        JLabel screenshotLabel = new JLabel(encodeToString(screenshot));
-        System.out.println(encodeToString(screenshot));
-//        frame.getContentPane().add(screenshotLabel);
+        JLabel screenshotLabel = new JLabel(new ImageIcon(screenshot));
+        frame.getContentPane().add(screenshotLabel);
         frame.setVisible(true);
     }
 }
