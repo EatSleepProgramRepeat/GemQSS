@@ -1,23 +1,31 @@
 package com.GemQSS;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Base64;
+import javax.imageio.ImageIO;
 
 public class ImageUtils {
-    public static String encodeToBase64(String imagePath) {
-        try {
-            // convert file to byte code array
-            byte[] imageBytes = Files.readAllBytes(Paths.get(imagePath));
+        public static String encodeToString(BufferedImage image) {
+            if (image == null) {
+                return "Failed to encode: input image is null.";
+            }
 
-            // encode to base 64
-            return Base64.getEncoder().encodeToString(imageBytes);
+            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                // Write the image data to an in-memory stream as a PNG
+                ImageIO.write(image, "png", outputStream);
 
-        } catch (IOException e) {
-            // prints the error to the console and returns a failure message.
-            System.err.println("Error reading the image file: " + e.getMessage());
-            return "Failed to encode the image.";
+                // Get the raw byte data from the stream
+                byte[] imageBytes = outputStream.toByteArray();
+
+                // Encode the byte data to a Base64 string
+                return Base64.getEncoder().encodeToString(imageBytes);
+
+            } catch (IOException e) {
+                // If an error occurs during the in-memory write process
+                System.err.println("Error converting BufferedImage to bytes: " + e.getMessage());
+                return "Failed to encode the image.";
+            }
         }
     }
-}
