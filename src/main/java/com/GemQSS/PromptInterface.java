@@ -29,7 +29,7 @@ public class PromptInterface extends Application {
                 Color.rgb(2, 134, 136),
                 BorderStrokeStyle.SOLID,
                 CornerRadii.EMPTY,
-                new BorderWidths(8)
+                new BorderWidths(5)
         )));
 
         Scene scene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight());
