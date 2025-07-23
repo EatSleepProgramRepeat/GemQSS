@@ -1,12 +1,10 @@
 package com.GemQSS;
 
-import javafx.scene.shape.Rectangle;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -73,8 +71,8 @@ public class PromptInterface extends Application {
         // Create properties to animate stage size
         SimpleDoubleProperty animatedWidth = new SimpleDoubleProperty(startingWidth);
         SimpleDoubleProperty animatedHeight = new SimpleDoubleProperty(startingHeight);
-        animatedWidth.addListener((obs, oldVal, newVal) -> primaryStage.setWidth(newVal.doubleValue()));
-        animatedHeight.addListener((obs, oldVal, newVal) -> primaryStage.setHeight(newVal.doubleValue()));
+        animatedWidth.addListener((_, _, newVal) -> primaryStage.setWidth(newVal.doubleValue()));
+        animatedHeight.addListener((_, _, newVal) -> primaryStage.setHeight(newVal.doubleValue()));
 
         primaryStage.setWidth(startingWidth);
         primaryStage.setHeight(startingHeight);
@@ -123,7 +121,7 @@ public class PromptInterface extends Application {
                         "-fx-text-fill: white;"
         );
 
-        qualifiedTextField.setOnAction(event -> {
+        qualifiedTextField.setOnAction(_ -> {
             if (!animationStatus) {
                 timeline.play();
                 animationStatus = true;
