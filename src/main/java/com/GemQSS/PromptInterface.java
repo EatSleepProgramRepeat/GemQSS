@@ -49,10 +49,10 @@ public class PromptInterface extends Application {
         TextField textField = qualifiedTextField(root.getPrefWidth(), root.getPrefHeight());
 
         primaryStage.setScene(scene);
-        primaryStage.initStyle(StageStyle.UNDECORATED); // Changed from TRANSPARENT
-        scene.setFill(Color.rgb(60,60,60,0.9)); // Changed from TRANSPARENT
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        scene.setFill(Color.TRANSPARENT);
         root.setBackground(new Background(new BackgroundFill(
-                Color.TRANSPARENT, // Make root background transparent
+                new Color(0, 0, 0, 0.75),
                 CornerRadii.EMPTY,
                 Insets.EMPTY
         )));
@@ -83,18 +83,18 @@ public class PromptInterface extends Application {
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(root.prefWidthProperty(), startWidth),
                         new KeyValue(root.prefHeightProperty(), startHeight),
-                        new KeyValue(textField.prefWidthProperty(), startWidth),
-                        new KeyValue(textField.prefHeightProperty(), startHeight),
                         new KeyValue(animatedWidth, startWidth),
-                        new KeyValue(animatedHeight, startHeight)
+                        new KeyValue(animatedHeight, startHeight),
+                        new KeyValue(textField.layoutXProperty(), 0),
+                        new KeyValue(textField.layoutYProperty(), 0)
                 ),
-                new KeyFrame(Duration.seconds(1.5),
+                new KeyFrame(Duration.seconds(1),
                         new KeyValue(root.prefWidthProperty(), targetWidth, Interpolator.EASE_BOTH),
                         new KeyValue(root.prefHeightProperty(), targetHeight, Interpolator.EASE_BOTH),
-                        new KeyValue(textField.prefWidthProperty(), targetWidth, Interpolator.EASE_BOTH),
-                        new KeyValue(textField.prefHeightProperty(), targetHeight, Interpolator.EASE_BOTH),
                         new KeyValue(animatedWidth, targetWidth, Interpolator.EASE_BOTH),
-                        new KeyValue(animatedHeight, targetHeight, Interpolator.EASE_BOTH)
+                        new KeyValue(animatedHeight, targetHeight, Interpolator.EASE_BOTH),
+                        new KeyValue(textField.layoutXProperty(), (targetWidth - startWidth) / 2, Interpolator.EASE_BOTH),
+                        new KeyValue(textField.layoutYProperty(), (targetHeight - startHeight) / 2, Interpolator.EASE_BOTH)
                 )
         );
 
@@ -110,15 +110,15 @@ public class PromptInterface extends Application {
         qualifiedTextField.setFont(Font.font("monospace", height / 2.5));
         qualifiedTextField.setBackground(Background.EMPTY);
         qualifiedTextField.setStyle(
-                "-fx-background-color: transparent;" +
-                        "-fx-control-inner-background: transparent;" +
-                        "-fx-text-box-border: transparent;" +
-                        "-fx-focus-color: transparent;" +
-                        "-fx-faint-focus-color: transparent;" +
-                        "-fx-highlight-fill: transparent;" +
-                        "-fx-highlight-text-fill: white;" +
-                        "-fx-prompt-text-fill: white;" +
-                        "-fx-text-fill: white;"
+                "-fx-background-color: rgb(40,40,40);" +
+                "-fx-control-inner-background: rgb(40,40,40);" +
+                "-fx-text-box-border: transparent;" +
+                "-fx-focus-color: transparent;" +
+                "-fx-faint-focus-color: transparent;" +
+                "-fx-highlight-fill: transparent;" +
+                "-fx-highlight-text-fill: white;" +
+                "-fx-prompt-text-fill: white;" +
+                "-fx-text-fill: white;"
         );
 
         qualifiedTextField.setOnAction(_ -> {
