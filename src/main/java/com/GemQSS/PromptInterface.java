@@ -1,6 +1,11 @@
 package com.GemQSS;
 
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
@@ -9,8 +14,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.Screen;
+import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 public class PromptInterface extends Application {
+    private Timeline timeline;
+    private boolean animationStatus = false;
 
     @Override
     public void start(Stage primaryStage) {
@@ -18,12 +27,10 @@ public class PromptInterface extends Application {
         primaryStage.setAlwaysOnTop(true);
 
         // Sizing
-        primaryStage.setHeight(50);
-        // Set the width to 1/8 of the screen
         double screenWidth = Screen.getPrimary().getBounds().getWidth();
-        System.out.println(screenWidth);
-        primaryStage.setWidth(screenWidth / 4);
+        double screenHeight = Screen.getPrimary().getBounds().getHeight();
 
+        // Create the root pane with border
         StackPane root = new StackPane();
         root.setBorder(new Border(new BorderStroke(
                 Color.rgb(2, 134, 136),
@@ -32,13 +39,64 @@ public class PromptInterface extends Application {
                 new BorderWidths(5)
         )));
 
-        Scene scene = new Scene(root, primaryStage.getWidth(), primaryStage.getHeight());
+        double startingWidth = screenWidth / 4;
+        double startingHeight = 50;
+        root.setPrefSize(screenWidth / 4, 50);
+
+        Scene scene = new Scene(root, startingWidth, startingHeight);
+
         // Create and add the text field
-        TextField textField = qualifiedTextField(scene.getWidth(), scene.getHeight()); // Example width and height
-        root.getChildren().add(textField);
+        TextField textField = qualifiedTextField(root.getPrefWidth(), root.getPrefHeight());
 
         primaryStage.setScene(scene);
-        scene.setFill(new Color(0.1, 0.1, 0.1, 0.85));
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        scene.setFill(Color.TRANSPARENT);
+        root.setBackground(new Background(new BackgroundFill(
+                new Color(0, 0, 0, 0.75),
+                CornerRadii.EMPTY,
+                Insets.EMPTY
+        )));
+        primaryStage.setX(100);
+        primaryStage.setY(100);
+
+        root.getChildren().addAll(textField);
+
+        // Animations to smoothly resize when the user presses enter
+        double targetWidth = screenWidth / 3;
+        double targetHeight = screenHeight / 1.25;
+        System.out.println("start width and height: " + root.getPrefWidth() + " " + root.getPrefHeight());
+        final double startWidth = root.getPrefWidth();
+        final double startHeight = root.getPrefHeight();
+
+        // Create properties to animate stage size
+        SimpleDoubleProperty animatedWidth = new SimpleDoubleProperty(startingWidth);
+        SimpleDoubleProperty animatedHeight = new SimpleDoubleProperty(startingHeight);
+        animatedWidth.addListener((_, _, newVal) -> primaryStage.setWidth(newVal.doubleValue()));
+        animatedHeight.addListener((_, _, newVal) -> primaryStage.setHeight(newVal.doubleValue()));
+
+        primaryStage.setWidth(startingWidth);
+        primaryStage.setHeight(startingHeight);
+        root.setPrefSize(startingWidth, startingHeight);
+        textField.setPrefSize(startingWidth, startingHeight);
+
+        timeline = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(root.prefWidthProperty(), startWidth),
+                        new KeyValue(root.prefHeightProperty(), startHeight),
+                        new KeyValue(animatedWidth, startWidth),
+                        new KeyValue(animatedHeight, startHeight),
+                        new KeyValue(textField.layoutXProperty(), 0),
+                        new KeyValue(textField.layoutYProperty(), 0)
+                ),
+                new KeyFrame(Duration.seconds(1),
+                        new KeyValue(root.prefWidthProperty(), targetWidth, Interpolator.EASE_BOTH),
+                        new KeyValue(root.prefHeightProperty(), targetHeight, Interpolator.EASE_BOTH),
+                        new KeyValue(animatedWidth, targetWidth, Interpolator.EASE_BOTH),
+                        new KeyValue(animatedHeight, targetHeight, Interpolator.EASE_BOTH),
+                        new KeyValue(textField.layoutXProperty(), (targetWidth - startWidth) / 2, Interpolator.EASE_BOTH),
+                        new KeyValue(textField.layoutYProperty(), (targetHeight - startHeight) / 2, Interpolator.EASE_BOTH)
+                )
+        );
 
         primaryStage.show();
     }
@@ -50,7 +108,25 @@ public class PromptInterface extends Application {
         qualifiedTextField.setMaxWidth(width);
         qualifiedTextField.setMaxHeight(height);
         qualifiedTextField.setFont(Font.font("monospace", height / 2.5));
-        qualifiedTextField.setStyle("-fx-background-color: rgba(0,0,0,0.68); -fx-text-fill: white; -fx-border-color: transparent; -fx-border-width: 0px; -fx-background-radius: 0; -fx-background-insets: 0; -fx-control-inner-background: transparent; -fx-padding: 0 8 0 8;");
+        qualifiedTextField.setBackground(Background.EMPTY);
+        qualifiedTextField.setStyle(
+                "-fx-background-color: rgb(40,40,40);" +
+                "-fx-control-inner-background: rgb(40,40,40);" +
+                "-fx-text-box-border: transparent;" +
+                "-fx-focus-color: transparent;" +
+                "-fx-faint-focus-color: transparent;" +
+                "-fx-highlight-fill: transparent;" +
+                "-fx-highlight-text-fill: white;" +
+                "-fx-prompt-text-fill: white;" +
+                "-fx-text-fill: white;"
+        );
+
+        qualifiedTextField.setOnAction(_ -> {
+            if (!animationStatus) {
+                timeline.play();
+                animationStatus = true;
+            }
+        });
         StackPane.setMargin(qualifiedTextField, new Insets(0));
         return qualifiedTextField;
     }
